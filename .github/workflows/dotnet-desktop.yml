@@ -23,10 +23,11 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: your-solution-name                     # e.g. MyWpfApp.sln
-      Test_Project_Path: your-test-project-path             # e.g. MyWpfApp.Tests\MyWpfApp.Tests.csproj
-      Wap_Project_Directory: your-wap-project-directory     # e.g. MyWpfApp.Package
-      Wap_Project_Path: your-wap-project-path               # e.g. MyWpfApp.Package\MyWpfApp.Package.wapproj
+      Solution_Name: ShinyWarper.sln
+      Test_Project_Path: Tests/Warper.Tests/Warper.Tests.csproj
+      Wap_Project_Directory: ShinyWarper.Package
+      Wap_Project_Path: ShinyWarper.Package/ShinyWarper.Package.wapproj
+
 
     steps:
       - name: Checkout repository
