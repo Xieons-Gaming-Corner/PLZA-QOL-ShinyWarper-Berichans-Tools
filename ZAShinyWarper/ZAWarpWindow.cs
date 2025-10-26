@@ -20,6 +20,7 @@ namespace PLADumper
 
         private List<Vector3> positions = new List<Vector3>();
         private const string configName = "positions.txt";
+        private const string filterConfigName = "filter_config.txt";
 
         private ShinyHunter<PK9> shinyHunter = new ShinyHunter<PK9>();
 
@@ -29,7 +30,7 @@ namespace PLADumper
 
         // Bot
         private bool warping = false;
-        private int warpsPerSave = 10;
+        private int warpsPerSave = 3;
         private int currentWarps = 0;
 
         public ZAWarpWindow()
@@ -51,7 +52,7 @@ namespace PLADumper
             cBSpecies.Items.Add("Any");
             foreach (var item in ZAZukan.PokedexNumbersZA)
                 cBSpecies.Items.Add($"{item.Value:D3} - {item.Key}");
-            cBSpecies.SelectedIndex = 0;
+            cBSpecies.SetItemChecked(0, true);
 
             // IVs
             CBIVs = new ComboBox[6]
@@ -77,19 +78,29 @@ namespace PLADumper
                 textBox1.Text = ip;
             }
 
+            LoadFilterConfig();
             LoadAllAndUpdateUI();
         }
 
         private ShinyHunter<PK9>.ShinyFilter<PK9> getFilter()
         {
             var filter = new ShinyHunter<PK9>.ShinyFilter<PK9>();
-            // Species
-            if (cBSpecies.SelectedIndex > 0)
+            // Species - collect all checked species
+            var checkedSpecies = new List<ushort>();
+            for (int i = 0; i < cBSpecies.Items.Count; i++)
             {
-                var sel = cBSpecies.SelectedItem.ToString()!;
-                var spl = sel.Split(" - ");
-                filter.Species = ushort.Parse(spl[0]);
+                if (cBSpecies.GetItemChecked(i) && i > 0) // Skip "Any" at index 0
+                {
+                    var sel = cBSpecies.Items[i].ToString()!;
+                    var spl = sel.Split(" - ");
+                    checkedSpecies.Add(ushort.Parse(spl[0]));
+                }
             }
+
+            // If "Any" is checked or no species selected, leave filter.Species as null
+            // Otherwise, set the list of species
+            if (checkedSpecies.Count > 0)
+                filter.SpeciesList = checkedSpecies;
 
             // IVs
             for (int i = 0; i < 6; i++)
@@ -99,6 +110,7 @@ namespace PLADumper
 
             // Size
             filter.SizeMinimum = (byte)numericUpDownScale.Value;
+            filter.SizeMaximum = (byte)numericUpDownScale2.Value;
             return filter;
         }
 
@@ -110,9 +122,11 @@ namespace PLADumper
                 botsys.Connect(textBox1.Text, 6000);
                 bot = botsys;
                 groupBox1.Enabled = true;
+                gBShinyHunt.Enabled = true;
                 shinyHunter.LoadStashedShinies(bot, "sets.txt");
-                MessageBox.Show($"Connected to SysBot (network). The following shinies are stashed on your save currently: \r\n{shinyHunter.GetShowdownSets(shinyHunter.StashedShinies)}");
+                MessageBox.Show($"Connected to SysBot (network). The following shinies are stashed on your save currently: \r\n{shinyHunter.GetShinyStashInfo([.. shinyHunter.StashedShinies.Reverse()])}");
                 bot.SendBytes(Encoding.ASCII.GetBytes("detachController\r\n"));
+                cleanUpBot();
             }
             catch (Exception ex)
             {
@@ -128,9 +142,11 @@ namespace PLADumper
                 botusb.Connect();
                 bot = botusb;
                 groupBox1.Enabled = true;
+                gBShinyHunt.Enabled = true;
                 shinyHunter.LoadStashedShinies(bot, "sets.txt");
-                MessageBox.Show($"Connected to UsbBot (USB). The following shinies are stashed on your save currently: \r\n{shinyHunter.GetShowdownSets(shinyHunter.StashedShinies)}");
+                MessageBox.Show($"Connected to UsbBot (USB). The following shinies are stashed on your save currently: \r\n{shinyHunter.GetShinyStashInfo([.. shinyHunter.StashedShinies.Reverse()])}");
                 bot.SendBytes(Encoding.ASCII.GetBytes("detachController\r\n"));
+                cleanUpBot();
             }
             catch (Exception ex)
             {
@@ -286,15 +302,99 @@ namespace PLADumper
             }
         }
 
+        private void btnResetSpecies_Click(object sender, EventArgs e)
+        {
+            // Uncheck all items
+            for (int i = 0; i < cBSpecies.Items.Count; i++)
+            {
+                cBSpecies.SetItemChecked(i, false);
+            }
+            // Check "Any" (index 0)
+            cBSpecies.SetItemChecked(0, true);
+            SaveFilterConfig();
+        }
+
+        private void cBSpecies_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            // Save filter config when species selection changes
+            // Use BeginInvoke to ensure the change is applied before saving
+            BeginInvoke(new Action(() => SaveFilterConfig()));
+        }
+
+        private void SaveFilterConfig()
+        {
+            try
+            {
+                var sb = new StringBuilder();
+                // Save checked species indices
+                var checkedIndices = new List<int>();
+                for (int i = 0; i < cBSpecies.Items.Count; i++)
+                {
+                    if (cBSpecies.GetItemChecked(i))
+                        checkedIndices.Add(i);
+                }
+                sb.AppendLine("SpeciesIndices=" + string.Join(",", checkedIndices));
+
+                File.WriteAllText(filterConfigName, sb.ToString());
+            }
+            catch
+            {
+                // Silently fail if we can't save config
+            }
+        }
+
+        private void LoadFilterConfig()
+        {
+            try
+            {
+                if (!File.Exists(filterConfigName))
+                    return;
+
+                var lines = File.ReadAllLines(filterConfigName);
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("SpeciesIndices="))
+                    {
+                        var indicesStr = line.Substring("SpeciesIndices=".Length);
+                        if (string.IsNullOrEmpty(indicesStr))
+                            continue;
+
+                        var indices = indicesStr.Split(',').Select(int.Parse).ToList();
+
+                        // First uncheck all
+                        for (int i = 0; i < cBSpecies.Items.Count; i++)
+                        {
+                            cBSpecies.SetItemChecked(i, false);
+                        }
+
+                        // Then check the saved ones
+                        foreach (var idx in indices)
+                        {
+                            if (idx < cBSpecies.Items.Count)
+                                cBSpecies.SetItemChecked(idx, true);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // If loading fails, just use defaults ("Any" checked)
+            }
+        }
+
         private void setFiltersEnableState(bool enabled)
         {
-            cBSpecies.Enabled = enabled;
+            cBSpecies.PerformSafely(() => cBSpecies.Enabled = enabled);
             foreach (var cb in CBIVs)
-                cb.Enabled = enabled;
-            numericUpDownScale.Enabled = enabled;
-            numericUpDownSpawnCheckTime.Enabled = enabled;
-            cBWhenShinyFound.Enabled = enabled;
-            numericUpDownCamMove.Enabled = enabled;
+                cb.PerformSafely(() => cb.Enabled = enabled);
+            numericUpDownScale.PerformSafely(() => numericUpDownScale.Enabled = enabled);
+            numericUpDownSpawnCheckTime.PerformSafely(() => numericUpDownSpawnCheckTime.Enabled = enabled);
+            cBWhenShinyFound.PerformSafely(() => cBWhenShinyFound.Enabled = enabled);
+            numericUpDownCamMove.PerformSafely(() => numericUpDownCamMove.Enabled = enabled);
+            numericUpDownSaveFreq.PerformSafely(() => numericUpDownSaveFreq.Enabled = enabled);
+            groupBox1.PerformSafely(() => groupBox1.Enabled = enabled);
+            btnResetSpecies.PerformSafely(() => btnResetSpecies.Enabled = enabled);
+            numericUpDownScale2.PerformSafely(() => numericUpDownScale2.Enabled = enabled);
         }
 
         // Bot
@@ -302,7 +402,24 @@ namespace PLADumper
         private void cleanUpBot()
         {
             if (bot != null && bot.Connected)
+            {
                 bot.SendBytes(Encoding.ASCII.GetBytes("setStick RIGHT 0 0\r\n"));
+                bot.SendBytes(Encoding.ASCII.GetBytes("detachController\r\n"));
+            }
+        }
+
+        private async Task saveGame()
+        {
+            bot.SendBytes(Encoding.ASCII.GetBytes("click X\r\n"));
+            await Task.Delay(1_000).ConfigureAwait(false);
+            bot.SendBytes(Encoding.ASCII.GetBytes("click R\r\n"));
+            await Task.Delay(1_000).ConfigureAwait(false);
+            bot.SendBytes(Encoding.ASCII.GetBytes("click A\r\n"));
+            await Task.Delay(5_000).ConfigureAwait(false); // wait for save
+            bot.SendBytes(Encoding.ASCII.GetBytes("click B\r\n"));
+            await Task.Delay(0_800).ConfigureAwait(false);
+            bot.SendBytes(Encoding.ASCII.GetBytes("click B\r\n"));
+            await Task.Delay(0_800).ConfigureAwait(false);
         }
 
         private async void btnWarp_Click(object sender, EventArgs e)
@@ -322,10 +439,14 @@ namespace PLADumper
                 return;
             }
 
-            var fitler = getFilter();
+            var filter = getFilter();
             var warpInterval = (int)numericUpDownSpawnCheckTime.Value;
             var camSpeed = (int)numericUpDownCamMove.Value;
             var action = (ShinyFoundAction)cBWhenShinyFound.SelectedItem!;
+            var saveFrequency = (int)numericUpDownSaveFreq.Value;
+
+            int shiniesFound = 0;
+
             currentWarps = 0;
 
             warping = true;
@@ -339,20 +460,8 @@ namespace PLADumper
             while (warping)
             {
                 currentWarps++;
-                if (currentWarps % warpsPerSave == 0)
-                {
-                    // Save
-                    bot.SendBytes(Encoding.ASCII.GetBytes("click X\r\n"));
-                    await Task.Delay(1_000).ConfigureAwait(false);
-                    bot.SendBytes(Encoding.ASCII.GetBytes("click R\r\n"));
-                    await Task.Delay(1_000).ConfigureAwait(false);
-                    bot.SendBytes(Encoding.ASCII.GetBytes("click A\r\n"));
-                    await Task.Delay(5_000).ConfigureAwait(false); // wait for save
-                    bot.SendBytes(Encoding.ASCII.GetBytes("click B\r\n"));
-                    await Task.Delay(0_800).ConfigureAwait(false);
-                    bot.SendBytes(Encoding.ASCII.GetBytes("click B\r\n"));
-                    await Task.Delay(0_800).ConfigureAwait(false);
-                }
+                if (currentWarps % saveFrequency == 0)
+                    await saveGame().ConfigureAwait(false);
 
                 // Check shinies first as a new one may have spawned before we move
                 var newFound = shinyHunter.LoadStashedShinies(bot, "sets.txt");
@@ -361,7 +470,8 @@ namespace PLADumper
                     var newShinies = shinyHunter.DifferentShinies;
                     foreach (var pk in newShinies)
                     {
-                        if (fitler.MatchesFilter(pk))
+                        shiniesFound++;
+                        if (filter.MatchesFilter(pk.PKM))
                         {
                             // Found one
                             switch (action)
@@ -371,12 +481,19 @@ namespace PLADumper
                                     cleanUpBot();
                                     bot.SendBytes(Encoding.ASCII.GetBytes("click X\r\n"));
                                     btnWarp.PerformSafely(() => btnWarp.Text = "Start Warping");
-                                    MessageBox.Show($"A shiny matching the filter has been found! Stopping warping.\r\n\r\n{ShowdownParsing.GetShowdownText(pk)}");
+                                    setFiltersEnableState(true);
+                                    MessageBox.Show($"A shiny matching the filter has been found after {currentWarps} attempts! Stopping warping.\r\n\r\n{pk}\r\n" +
+                                                         (pk.PKM.Scale == 255 ? "This Pokemon is ALPHA!" : "This Pokemon is not an alpha"), "Found!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                     break;
-                                    //case ShinyFoundAction.CacheAndContinue:
-                                    //    MessageBox.Show($"A shiny matching the filter has been found!\r\n\r\n{pk.GetShowdownSet()}");
-                                    //    break;
                             }
+                        }
+                        else // Notify the user anyway, but don't stop spawning/warping. The user should know that a shiny is found because it will occupy one of the shiny stash slots until it is removed
+                        {
+                            CrossThreadExtensions.DoThreaded(() =>
+                            {
+                                MessageBox.Show($"The following shiny has been found, but does not match your filter. You may wish to remove it such that it doesn't occupy one of your shiny stash slots.\r\n\r\n{pk}\r\n" +
+                                                             (pk.PKM.Scale == 255 ? "This Pokemon is ALPHA!" : "This Pokemon is not an alpha"), "Found something we don't want!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            });
                         }
                     }
                 }
@@ -386,15 +503,16 @@ namespace PLADumper
                     if (!warping)
                         break;
                     SetPos(pos.x, pos.y, pos.z);
-                    await Task.Delay(4000).ConfigureAwait(false); // fall out and load species
+                    await Task.Delay(1_000).ConfigureAwait(false); // fall out and load species
                     // handle falling out
                     int tries = 25;
                     for (; tries > 0; --tries)
                     {
-                        if (GetPos().y == pos.y)
+                        // check for less than 0.02 difference to avoid float precision issues. We only care about Y here as X/Z may vary due to terrain
+                        if (GetPos().y >= pos.y - 0.02f && GetPos().y <= pos.y + 0.02f)
                             break;
-                        SetPos(pos.x, pos.y, pos.z);
-                        await Task.Delay(1100).ConfigureAwait(false);
+                        SetPos(pos.x, pos.y + (tries > 20 ? 1 : 0), pos.z);
+                        await Task.Delay(1_200).ConfigureAwait(false);
                     }
 
                     if (tries == 0) // failed to load
@@ -405,9 +523,46 @@ namespace PLADumper
                         MessageBox.Show($"Warping has failed, please check the console!");
                         break;
                     }
-                }
 
-                await Task.Delay(warpInterval).ConfigureAwait(false);
+                    if (pos.flags.Contains("instant"))
+                        continue;
+
+                    if (pos.flags.Contains("halfwait"))
+                        await Task.Delay(warpInterval / 2).ConfigureAwait(false);
+                    else
+                        await Task.Delay(warpInterval).ConfigureAwait(false);
+                }
+            }
+        }
+
+        private void cBSpecies_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Select "Any" if none are selected
+            bool anyChecked = false;
+            for (int i = 0; i < cBSpecies.Items.Count; i++)
+            {
+                if (cBSpecies.GetItemChecked(i))
+                {
+                    anyChecked = true;
+                    break;
+                }
+            }
+            if (!anyChecked)
+            {
+                cBSpecies.SetItemChecked(0, true);
+                return;
+            }
+            // Clear everything else if "Any" is selected
+            if (cBSpecies.SelectedIndex == 0)
+            {
+                for (int i = 1; i < cBSpecies.Items.Count; i++)
+                {
+                    cBSpecies.SetItemChecked(i, false);
+                }
+            }
+            else // Clear "Any" if anything else is selected
+            {
+                cBSpecies.SetItemChecked(0, false);
             }
         }
     }
@@ -415,19 +570,44 @@ namespace PLADumper
     public struct Vector3
     {
         public float x, y, z;
+        public string[] flags = [];
+
+        public Vector3()
+        {
+            x = 0; y = 0; z = 0;
+            flags = [];
+        }
+
+        public Vector3(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            flags = [];
+        }
 
         public override string ToString()
         {
-            return $"{x},{y},{z}";
+            return $"{x},{y},{z};{string.Join(',', flags)}";
         }
 
         public static Vector3 FromString(string s)
         {
-            var spl = s.Split(',');
+            var prePostFlags = s.Split(';');
+            var spl = prePostFlags[0].Split(',');
             Vector3 v = new Vector3();
             v.x = float.Parse(spl[0]);
             v.y = float.Parse(spl[1]);
             v.z = float.Parse(spl[2]);
+
+            if (prePostFlags.Length > 1)
+            {
+                var nFlags = new List<string>();
+                spl = prePostFlags[1].Split(',');
+                foreach (var str in spl)
+                    nFlags.Add(str);
+                v.flags = nFlags.ToArray();
+            }
 
             return v;
         }

@@ -45,12 +45,16 @@
             label4 = new System.Windows.Forms.Label();
             button4 = new System.Windows.Forms.Button();
             gBShinyHunt = new System.Windows.Forms.GroupBox();
+            numericUpDownSaveFreq = new System.Windows.Forms.NumericUpDown();
+            lblSaveFreq = new System.Windows.Forms.Label();
             numericUpDownCamMove = new System.Windows.Forms.NumericUpDown();
             lblCam = new System.Windows.Forms.Label();
             numericUpDownSpawnCheckTime = new System.Windows.Forms.NumericUpDown();
             label3 = new System.Windows.Forms.Label();
             numericUpDownScale = new System.Windows.Forms.NumericUpDown();
+            numericUpDownScale2 = new System.Windows.Forms.NumericUpDown();
             lblScale = new System.Windows.Forms.Label();
+            lblScale2 = new System.Windows.Forms.Label();
             lblIVSpe = new System.Windows.Forms.Label();
             lblIVSpD = new System.Windows.Forms.Label();
             lblIVSpA = new System.Windows.Forms.Label();
@@ -64,7 +68,8 @@
             cBIVAtk = new System.Windows.Forms.ComboBox();
             cBIVHP = new System.Windows.Forms.ComboBox();
             lblIV = new System.Windows.Forms.Label();
-            cBSpecies = new System.Windows.Forms.ComboBox();
+            cBSpecies = new System.Windows.Forms.CheckedListBox();
+            btnResetSpecies = new System.Windows.Forms.Button();
             lblSpecies = new System.Windows.Forms.Label();
             lblFilter = new System.Windows.Forms.Label();
             cBWhenShinyFound = new System.Windows.Forms.ComboBox();
@@ -74,9 +79,11 @@
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             gBShinyHunt.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownSaveFreq).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownCamMove).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownSpawnCheckTime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownScale).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownScale2).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -123,18 +130,18 @@
             groupBox1.Controls.Add(button6);
             groupBox1.Controls.Add(button5);
             groupBox1.Enabled = false;
-            groupBox1.Location = new System.Drawing.Point(19, 125);
+            groupBox1.Location = new System.Drawing.Point(15, 125);
             groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox1.Size = new System.Drawing.Size(300, 346);
+            groupBox1.Size = new System.Drawing.Size(303, 425);
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Editing";
             // 
             // button9
             // 
-            button9.Location = new System.Drawing.Point(200, 140);
+            button9.Location = new System.Drawing.Point(204, 166);
             button9.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button9.Name = "button9";
             button9.Size = new System.Drawing.Size(88, 27);
@@ -145,7 +152,7 @@
             // 
             // button3
             // 
-            button3.Location = new System.Drawing.Point(105, 138);
+            button3.Location = new System.Drawing.Point(108, 166);
             button3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button3.Name = "button3";
             button3.Size = new System.Drawing.Size(88, 27);
@@ -156,7 +163,7 @@
             // 
             // button2
             // 
-            button2.Location = new System.Drawing.Point(10, 140);
+            button2.Location = new System.Drawing.Point(12, 166);
             button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button2.Name = "button2";
             button2.Size = new System.Drawing.Size(88, 27);
@@ -168,16 +175,16 @@
             // listBox1
             // 
             listBox1.FormattingEnabled = true;
-            listBox1.Location = new System.Drawing.Point(7, 22);
+            listBox1.Location = new System.Drawing.Point(10, 22);
             listBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listBox1.Name = "listBox1";
-            listBox1.Size = new System.Drawing.Size(285, 109);
+            listBox1.Size = new System.Drawing.Size(285, 139);
             listBox1.TabIndex = 14;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(7, 235);
+            label2.Location = new System.Drawing.Point(12, 296);
             label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(61, 15);
@@ -186,7 +193,7 @@
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new System.Drawing.Point(217, 298);
+            numericUpDown1.Location = new System.Drawing.Point(216, 388);
             numericUpDown1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new System.Drawing.Size(76, 23);
@@ -195,7 +202,7 @@
             // 
             // button8
             // 
-            button8.Location = new System.Drawing.Point(16, 262);
+            button8.Location = new System.Drawing.Point(12, 333);
             button8.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button8.Name = "button8";
             button8.Size = new System.Drawing.Size(88, 27);
@@ -206,7 +213,7 @@
             // 
             // button7
             // 
-            button7.Location = new System.Drawing.Point(205, 262);
+            button7.Location = new System.Drawing.Point(204, 333);
             button7.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button7.Name = "button7";
             button7.Size = new System.Drawing.Size(88, 27);
@@ -217,7 +224,7 @@
             // 
             // button6
             // 
-            button6.Location = new System.Drawing.Point(111, 286);
+            button6.Location = new System.Drawing.Point(108, 372);
             button6.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button6.Name = "button6";
             button6.Size = new System.Drawing.Size(88, 27);
@@ -228,7 +235,7 @@
             // 
             // button5
             // 
-            button5.Location = new System.Drawing.Point(111, 235);
+            button5.Location = new System.Drawing.Point(108, 296);
             button5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             button5.Name = "button5";
             button5.Size = new System.Drawing.Size(88, 27);
@@ -240,7 +247,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(63, 474);
+            label4.Location = new System.Drawing.Point(55, 555);
             label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(216, 30);
@@ -261,12 +268,16 @@
             // 
             // gBShinyHunt
             // 
+            gBShinyHunt.Controls.Add(numericUpDownSaveFreq);
+            gBShinyHunt.Controls.Add(lblSaveFreq);
             gBShinyHunt.Controls.Add(numericUpDownCamMove);
             gBShinyHunt.Controls.Add(lblCam);
             gBShinyHunt.Controls.Add(numericUpDownSpawnCheckTime);
             gBShinyHunt.Controls.Add(label3);
             gBShinyHunt.Controls.Add(numericUpDownScale);
+            gBShinyHunt.Controls.Add(numericUpDownScale2);
             gBShinyHunt.Controls.Add(lblScale);
+            gBShinyHunt.Controls.Add(lblScale2);
             gBShinyHunt.Controls.Add(lblIVSpe);
             gBShinyHunt.Controls.Add(lblIVSpD);
             gBShinyHunt.Controls.Add(lblIVSpA);
@@ -281,20 +292,40 @@
             gBShinyHunt.Controls.Add(cBIVHP);
             gBShinyHunt.Controls.Add(lblIV);
             gBShinyHunt.Controls.Add(cBSpecies);
+            gBShinyHunt.Controls.Add(btnResetSpecies);
             gBShinyHunt.Controls.Add(lblSpecies);
             gBShinyHunt.Controls.Add(lblFilter);
             gBShinyHunt.Controls.Add(cBWhenShinyFound);
             gBShinyHunt.Controls.Add(lblShinyFound);
             gBShinyHunt.Controls.Add(btnWarp);
             gBShinyHunt.Controls.Add(lblCreateTwo);
+            gBShinyHunt.Enabled = false;
             gBShinyHunt.Location = new System.Drawing.Point(327, 15);
             gBShinyHunt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             gBShinyHunt.Name = "gBShinyHunt";
             gBShinyHunt.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            gBShinyHunt.Size = new System.Drawing.Size(212, 489);
+            gBShinyHunt.Size = new System.Drawing.Size(212, 567);
             gBShinyHunt.TabIndex = 6;
             gBShinyHunt.TabStop = false;
             gBShinyHunt.Text = "Shiny Hunting";
+            // 
+            // numericUpDownSaveFreq
+            // 
+            numericUpDownSaveFreq.Location = new System.Drawing.Point(144, 207);
+            numericUpDownSaveFreq.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDownSaveFreq.Name = "numericUpDownSaveFreq";
+            numericUpDownSaveFreq.Size = new System.Drawing.Size(63, 23);
+            numericUpDownSaveFreq.TabIndex = 28;
+            numericUpDownSaveFreq.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            // 
+            // lblSaveFreq
+            // 
+            lblSaveFreq.AutoSize = true;
+            lblSaveFreq.Location = new System.Drawing.Point(14, 209);
+            lblSaveFreq.Name = "lblSaveFreq";
+            lblSaveFreq.Size = new System.Drawing.Size(90, 15);
+            lblSaveFreq.TabIndex = 27;
+            lblSaveFreq.Text = "Save frequency:";
             // 
             // numericUpDownCamMove
             // 
@@ -322,7 +353,6 @@
             numericUpDownSpawnCheckTime.Increment = new decimal(new int[] { 1000, 0, 0, 0 });
             numericUpDownSpawnCheckTime.Location = new System.Drawing.Point(12, 140);
             numericUpDownSpawnCheckTime.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
-            numericUpDownSpawnCheckTime.Minimum = new decimal(new int[] { 2000, 0, 0, 0 });
             numericUpDownSpawnCheckTime.Name = "numericUpDownSpawnCheckTime";
             numericUpDownSpawnCheckTime.Size = new System.Drawing.Size(193, 23);
             numericUpDownSpawnCheckTime.TabIndex = 24;
@@ -339,25 +369,43 @@
             // 
             // numericUpDownScale
             // 
-            numericUpDownScale.Location = new System.Drawing.Point(77, 435);
+            numericUpDownScale.Location = new System.Drawing.Point(80, 508);
             numericUpDownScale.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             numericUpDownScale.Name = "numericUpDownScale";
-            numericUpDownScale.Size = new System.Drawing.Size(120, 23);
+            numericUpDownScale.Size = new System.Drawing.Size(117, 23);
             numericUpDownScale.TabIndex = 22;
+            // 
+            // numericUpDownScale2
+            // 
+            numericUpDownScale2.Location = new System.Drawing.Point(80, 535);
+            numericUpDownScale2.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDownScale2.Name = "numericUpDownScale2";
+            numericUpDownScale2.Size = new System.Drawing.Size(117, 23);
+            numericUpDownScale2.TabIndex = 22;
+            numericUpDownScale2.Value = new decimal(new int[] { 255, 0, 0, 0 });
             // 
             // lblScale
             // 
             lblScale.AutoSize = true;
-            lblScale.Location = new System.Drawing.Point(14, 437);
+            lblScale.Location = new System.Drawing.Point(14, 510);
             lblScale.Name = "lblScale";
             lblScale.Size = new System.Drawing.Size(60, 15);
             lblScale.TabIndex = 21;
             lblScale.Text = "Min scale:";
             // 
+            // lblScale2
+            // 
+            lblScale2.AutoSize = true;
+            lblScale2.Location = new System.Drawing.Point(14, 538);
+            lblScale2.Name = "lblScale2";
+            lblScale2.Size = new System.Drawing.Size(62, 15);
+            lblScale2.TabIndex = 21;
+            lblScale2.Text = "Max scale:";
+            // 
             // lblIVSpe
             // 
             lblIVSpe.AutoSize = true;
-            lblIVSpe.Location = new System.Drawing.Point(140, 391);
+            lblIVSpe.Location = new System.Drawing.Point(140, 464);
             lblIVSpe.Name = "lblIVSpe";
             lblIVSpe.Size = new System.Drawing.Size(26, 15);
             lblIVSpe.TabIndex = 19;
@@ -366,7 +414,7 @@
             // lblIVSpD
             // 
             lblIVSpD.AutoSize = true;
-            lblIVSpD.Location = new System.Drawing.Point(77, 391);
+            lblIVSpD.Location = new System.Drawing.Point(77, 464);
             lblIVSpD.Name = "lblIVSpD";
             lblIVSpD.Size = new System.Drawing.Size(28, 15);
             lblIVSpD.TabIndex = 18;
@@ -375,7 +423,7 @@
             // lblIVSpA
             // 
             lblIVSpA.AutoSize = true;
-            lblIVSpA.Location = new System.Drawing.Point(14, 391);
+            lblIVSpA.Location = new System.Drawing.Point(14, 464);
             lblIVSpA.Name = "lblIVSpA";
             lblIVSpA.Size = new System.Drawing.Size(28, 15);
             lblIVSpA.TabIndex = 17;
@@ -384,7 +432,7 @@
             // cBIVSpe
             // 
             cBIVSpe.FormattingEnabled = true;
-            cBIVSpe.Location = new System.Drawing.Point(140, 409);
+            cBIVSpe.Location = new System.Drawing.Point(140, 482);
             cBIVSpe.Name = "cBIVSpe";
             cBIVSpe.Size = new System.Drawing.Size(57, 23);
             cBIVSpe.TabIndex = 16;
@@ -392,7 +440,7 @@
             // cBIVSpD
             // 
             cBIVSpD.FormattingEnabled = true;
-            cBIVSpD.Location = new System.Drawing.Point(77, 409);
+            cBIVSpD.Location = new System.Drawing.Point(77, 482);
             cBIVSpD.Name = "cBIVSpD";
             cBIVSpD.Size = new System.Drawing.Size(57, 23);
             cBIVSpD.TabIndex = 15;
@@ -400,7 +448,7 @@
             // cBIVSpA
             // 
             cBIVSpA.FormattingEnabled = true;
-            cBIVSpA.Location = new System.Drawing.Point(14, 409);
+            cBIVSpA.Location = new System.Drawing.Point(14, 482);
             cBIVSpA.Name = "cBIVSpA";
             cBIVSpA.Size = new System.Drawing.Size(57, 23);
             cBIVSpA.TabIndex = 14;
@@ -408,7 +456,7 @@
             // lblIVDef
             // 
             lblIVDef.AutoSize = true;
-            lblIVDef.Location = new System.Drawing.Point(140, 339);
+            lblIVDef.Location = new System.Drawing.Point(140, 412);
             lblIVDef.Name = "lblIVDef";
             lblIVDef.Size = new System.Drawing.Size(25, 15);
             lblIVDef.TabIndex = 13;
@@ -417,7 +465,7 @@
             // lblIVAtk
             // 
             lblIVAtk.AutoSize = true;
-            lblIVAtk.Location = new System.Drawing.Point(77, 339);
+            lblIVAtk.Location = new System.Drawing.Point(77, 412);
             lblIVAtk.Name = "lblIVAtk";
             lblIVAtk.Size = new System.Drawing.Size(25, 15);
             lblIVAtk.TabIndex = 12;
@@ -426,7 +474,7 @@
             // lblIVHP
             // 
             lblIVHP.AutoSize = true;
-            lblIVHP.Location = new System.Drawing.Point(14, 339);
+            lblIVHP.Location = new System.Drawing.Point(14, 412);
             lblIVHP.Name = "lblIVHP";
             lblIVHP.Size = new System.Drawing.Size(23, 15);
             lblIVHP.TabIndex = 11;
@@ -435,7 +483,7 @@
             // cBIVDef
             // 
             cBIVDef.FormattingEnabled = true;
-            cBIVDef.Location = new System.Drawing.Point(140, 357);
+            cBIVDef.Location = new System.Drawing.Point(140, 430);
             cBIVDef.Name = "cBIVDef";
             cBIVDef.Size = new System.Drawing.Size(57, 23);
             cBIVDef.TabIndex = 10;
@@ -443,7 +491,7 @@
             // cBIVAtk
             // 
             cBIVAtk.FormattingEnabled = true;
-            cBIVAtk.Location = new System.Drawing.Point(77, 357);
+            cBIVAtk.Location = new System.Drawing.Point(77, 430);
             cBIVAtk.Name = "cBIVAtk";
             cBIVAtk.Size = new System.Drawing.Size(57, 23);
             cBIVAtk.TabIndex = 9;
@@ -451,7 +499,7 @@
             // cBIVHP
             // 
             cBIVHP.FormattingEnabled = true;
-            cBIVHP.Location = new System.Drawing.Point(14, 357);
+            cBIVHP.Location = new System.Drawing.Point(14, 430);
             cBIVHP.Name = "cBIVHP";
             cBIVHP.Size = new System.Drawing.Size(57, 23);
             cBIVHP.TabIndex = 8;
@@ -459,7 +507,7 @@
             // lblIV
             // 
             lblIV.AutoSize = true;
-            lblIV.Location = new System.Drawing.Point(14, 322);
+            lblIV.Location = new System.Drawing.Point(14, 395);
             lblIV.Name = "lblIV";
             lblIV.Size = new System.Drawing.Size(25, 15);
             lblIV.TabIndex = 7;
@@ -467,11 +515,25 @@
             // 
             // cBSpecies
             // 
+            cBSpecies.CheckOnClick = true;
             cBSpecies.FormattingEnabled = true;
+            cBSpecies.IntegralHeight = false;
             cBSpecies.Location = new System.Drawing.Point(14, 294);
             cBSpecies.Name = "cBSpecies";
-            cBSpecies.Size = new System.Drawing.Size(193, 23);
+            cBSpecies.Size = new System.Drawing.Size(193, 94);
             cBSpecies.TabIndex = 6;
+            cBSpecies.ItemCheck += cBSpecies_ItemCheck;
+            cBSpecies.SelectedIndexChanged += cBSpecies_SelectedIndexChanged;
+            // 
+            // btnResetSpecies
+            // 
+            btnResetSpecies.Location = new System.Drawing.Point(145, 273);
+            btnResetSpecies.Name = "btnResetSpecies";
+            btnResetSpecies.Size = new System.Drawing.Size(62, 23);
+            btnResetSpecies.TabIndex = 29;
+            btnResetSpecies.Text = "Reset";
+            btnResetSpecies.UseVisualStyleBackColor = true;
+            btnResetSpecies.Click += btnResetSpecies_Click;
             // 
             // lblSpecies
             // 
@@ -485,7 +547,7 @@
             // lblFilter
             // 
             lblFilter.AutoSize = true;
-            lblFilter.Location = new System.Drawing.Point(9, 261);
+            lblFilter.Location = new System.Drawing.Point(12, 261);
             lblFilter.Name = "lblFilter";
             lblFilter.Size = new System.Drawing.Size(33, 15);
             lblFilter.TabIndex = 4;
@@ -535,7 +597,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(553, 510);
+            ClientSize = new System.Drawing.Size(553, 594);
             Controls.Add(gBShinyHunt);
             Controls.Add(button4);
             Controls.Add(label4);
@@ -552,9 +614,11 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             gBShinyHunt.ResumeLayout(false);
             gBShinyHunt.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownSaveFreq).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownCamMove).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownSpawnCheckTime).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownScale).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownScale2).EndInit();
             ResumeLayout(false);
             PerformLayout();
 
@@ -583,7 +647,8 @@
         private System.Windows.Forms.ComboBox cBWhenShinyFound;
         private System.Windows.Forms.Label lblShinyFound;
         private System.Windows.Forms.Button btnWarp;
-        private System.Windows.Forms.ComboBox cBSpecies;
+        private System.Windows.Forms.CheckedListBox cBSpecies;
+        private System.Windows.Forms.Button btnResetSpecies;
         private System.Windows.Forms.Label lblSpecies;
         private System.Windows.Forms.Label lblFilter;
         private System.Windows.Forms.Label lblIVSpe;
@@ -600,11 +665,15 @@
         private System.Windows.Forms.ComboBox cBIVHP;
         private System.Windows.Forms.Label lblIV;
         private System.Windows.Forms.NumericUpDown numericUpDownScale;
+        private System.Windows.Forms.NumericUpDown numericUpDownScale2;
         private System.Windows.Forms.Label lblScale;
+        private System.Windows.Forms.Label lblScale2;
         private System.Windows.Forms.NumericUpDown numericUpDownSpawnCheckTime;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown numericUpDownCamMove;
         private System.Windows.Forms.Label lblCam;
+        private System.Windows.Forms.NumericUpDown numericUpDownSaveFreq;
+        private System.Windows.Forms.Label lblSaveFreq;
     }
 }
 
